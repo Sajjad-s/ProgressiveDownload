@@ -31,7 +31,7 @@ const downloadFileWithRange = (url, startByte, endByte) => {
         'Authorization': 'Bearer 4f8d523e76874f019f2bcd9959cfa16d.XzIwMjM1'
     };
 
-    return fetch(url, { headers })
+    return fetch(url, {headers})
         .then(response => {
             if (!response.ok) {
                 throw new Error(`Download failed with status ${response.status}`);
@@ -48,22 +48,22 @@ const downloadFileWithRange = (url, startByte, endByte) => {
         });
 };
 
-const downloadFileInChunks = async () => {
+const downloadFileInChunks = async (fileUrl, totalFileSize) => {
+    const chunkSize = 500000;
     let startByte = 0;
-    let endByte = chunkSize - 1;
+    let endByte = chunkSize;
 
-    while (startByte < 5000000) {
-        await downloadFileWithRange(fileUrl, startByte, endByte);
+    const downloadChunk = async () => {
+        if (startByte < totalFileSize) {
+            await downloadFileWithRange(fileUrl, startByte, endByte);
+            startByte += chunkSize;
+            endByte = Math.min(startByte + chunkSize, totalFileSize);
 
-        startByte += chunkSize;
-        endByte = Math.min(startByte + chunkSize - 1, totalFileSize - 1);
-    }
+            setTimeout(downloadChunk, 300); // Wait for 300 milliseconds before downloading the next chunk
+        } else {
+            console.log('File download complete');
+        }
+    };
+
+    await downloadChunk();
 };
-
-downloadFileInChunks()
-    .then(() => {
-        console.log('File download complete');
-    })
-    .catch(error => {
-        console.error('Error occurred during download:', error);
-    });
