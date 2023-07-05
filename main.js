@@ -1,9 +1,29 @@
 const fetch = require('cross-fetch');
 
-const fileUrl = 'http://127.0.0.1:8081/PROGRESSIVE/9BF9VF6LBPCR22TD181817611688293216669';
-const chunkSize = 500000;
-const totalFileSize = 284796173;
+const requestUrl = 'http://10.56.16.54:80/register/?token=ed24e37c7ee84313acf2805a80122f94&hashFile=367TLMBI5MQRCT31&security=true&streamType=PROGRESSIVE';
 
+fetch(requestUrl)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`Request failed with status ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        const progressiveLink = data.progressiveLink;
+        const totalFileSize = data.size;
+
+        console.log('File download initiated');
+        console.log('Progressive Link:', progressiveLink);
+        console.log('Total File Size:', totalFileSize);
+
+        downloadFileInChunks(progressiveLink, totalFileSize);
+    })
+    .catch(error => {
+        console.error('Error occurred during request:', error);
+    });
+
+var counter = 0;
 const downloadFileWithRange = (url, startByte, endByte) => {
     const headers = {
         '_token_': 'ed24e37c7ee84313acf2805a80122f94',
