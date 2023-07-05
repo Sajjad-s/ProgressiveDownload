@@ -1,6 +1,17 @@
 const fetch = require('cross-fetch');
 
 const requestUrl = 'http://10.56.16.54:80/register/?token=ed24e37c7ee84313acf2805a80122f94&hashFile=367TLMBI5MQRCT31&security=true&streamType=PROGRESSIVE';
+var counter = 0;
+const chunkSize = 500000;
+let startByte = 0;
+let endByte = chunkSize;
+
+
+const headers = {
+    '_token_': 'ed24e37c7ee84313acf2805a80122f94',
+    'Range': `${startByte}-${endByte}`,
+    'Authorization': 'Bearer 4f8d523e76874f019f2bcd9959cfa16d.XzIwMjM1'
+};
 
 fetch(requestUrl)
     .then(response => {
@@ -23,13 +34,8 @@ fetch(requestUrl)
         console.error('Error occurred during request:', error);
     });
 
-var counter = 0;
 const downloadFileWithRange = (url, startByte, endByte) => {
-    const headers = {
-        '_token_': 'ed24e37c7ee84313acf2805a80122f94',
-        'Range': `${startByte}-${endByte}`,
-        'Authorization': 'Bearer 4f8d523e76874f019f2bcd9959cfa16d.XzIwMjM1'
-    };
+
 
     return fetch(url, {headers})
         .then(response => {
@@ -39,9 +45,13 @@ const downloadFileWithRange = (url, startByte, endByte) => {
             return response.blob();
         })
         .then(blob => {
-            const chunkSize = blob.size;
-            console.log(`Chunk ${counter} - startByte: ${startByte}, endByte: ${endByte}, Downloaded chunk size: ${chunkSize} bytes, Total downloaded `);
-            counter++;
+            const downloadedSize = blob.size;
+            console.log(`Chunk ${counter} - startByte: ${startByte}, endByte: ${endByte}, Downloaded chunk size: ${chunkSize} bytes, Total downloaded: ${downloadedSize}`);
+            if (downloadedSize != chunkSize)
+            {
+                console.log(`Error in counter: ${counter}, downloaded size of this chunk: ${downloadedSize}`);
+            }
+                counter++;
             return blob;
         })
         .catch(error => {
@@ -50,10 +60,6 @@ const downloadFileWithRange = (url, startByte, endByte) => {
 };
 
 const downloadFileInChunks = async (fileUrl, totalFileSize) => {
-    const chunkSize = 500000;
-    let startByte = 0;
-    let endByte = chunkSize;
-
     const downloadChunk = async () => {
         if (startByte < totalFileSize) {
             await downloadFileWithRange(fileUrl, startByte, endByte);
