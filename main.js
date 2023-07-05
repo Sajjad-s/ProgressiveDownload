@@ -24,9 +24,9 @@ fetch(requestUrl)
         const progressiveLink = data.progressiveLink;
         const totalFileSize = data.size;
 
-        console.log('File download initiated');
-        console.log('Progressive Link:', progressiveLink);
-        console.log('Total File Size:', totalFileSize);
+        console.log('\x1b[32m%s\x1b[0m', 'File download initiated');
+        console.log('\x1b[32m%s\x1b[0m', 'Progressive Link:', progressiveLink);
+        console.log('\x1b[32m%s\x1b[0m', 'Total File Size:', totalFileSize);
 
         downloadFileInChunks(progressiveLink, totalFileSize);
     })
@@ -46,8 +46,8 @@ const downloadFileWithRange = (url, startByte, endByte) => {
         })
         .then(blob => {
             const downloadedSize = blob.size;
-            console.log(`Chunk ${counter} - startByte: ${startByte}, endByte: ${endByte}, Downloaded chunk size: ${chunkSize} bytes, Total downloaded: ${downloadedSize}`);
-            if (downloadedSize != chunkSize)
+            console.log('\x1b[32m%s\x1b[0m',`Chunk ${counter} - startByte: ${startByte}, endByte: ${endByte}, Downloaded chunk size: ${chunkSize} bytes, Total downloaded: ${downloadedSize}`);
+            if (downloadedSize !== chunkSize)
             {
                 console.log(`Error in counter: ${counter}, downloaded size of this chunk: ${downloadedSize}`);
             }
@@ -68,7 +68,7 @@ const downloadFileInChunks = async (fileUrl, totalFileSize) => {
 
             setTimeout(downloadChunk, 300); // Wait for 300 milliseconds before downloading the next chunk
         } else {
-            console.log('File download complete');
+            console.log('\x1b[32m%s\x1b[0m', 'File download complete');
         }
     };
 
