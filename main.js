@@ -40,7 +40,8 @@ const downloadFileWithRange = (url, startByte, endByte) => {
         })
         .then(blob => {
             const chunkSize = blob.size;
-            console.log(`Downloaded chunk size: ${chunkSize} bytes`);
+            console.log(`Chunk ${counter} - startByte: ${startByte}, endByte: ${endByte}, Downloaded chunk size: ${chunkSize} bytes, Total downloaded `);
+            counter++;
             return blob;
         })
         .catch(error => {
